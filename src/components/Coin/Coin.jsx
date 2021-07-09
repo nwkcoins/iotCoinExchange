@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
-import './Coin.css';
+//import './Coin.css';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
+const TdCoinRow = styled.td`
+    border: 1px solid #ccc;
+    width: 25vh;
+`;
 
 export default class Coin extends Component {
     constructor(props) {
@@ -26,11 +32,11 @@ export default class Coin extends Component {
 
     render() {
         return (
-            <tr className="coin-row">
-                <td>{this.props.name}</td>
-                <td>{this.props.ticker}</td>
-                <td>${this.state.price}</td>
-                <td><button onClick={this.doCoinReferesh}>Refresh</button></td>
+            <tr>
+                <TdCoinRow>{this.props.name}</TdCoinRow>
+                <TdCoinRow>{this.props.ticker}</TdCoinRow>
+                <TdCoinRow>${this.state.price}</TdCoinRow>
+                <TdCoinRow><button onClick={this.doCoinReferesh}>Refresh</button></TdCoinRow>
             </tr>
         );
     }
