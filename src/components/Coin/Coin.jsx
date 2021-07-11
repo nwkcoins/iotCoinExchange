@@ -26,6 +26,7 @@ export default class Coin extends Component {
                 <TdCoinRow>{this.props.name}</TdCoinRow>
                 <TdCoinRow>{this.props.ticker}</TdCoinRow>
                 <TdCoinRow>${this.props.price}</TdCoinRow>
+                <TdCoinRow style={{display:this.props.showBalance ? 'block' : 'none'}}>${this.props.balance}</TdCoinRow>
                 <TdCoinRow><button onClick={this.doCoinRefresh}>Refresh</button></TdCoinRow>
             </tr>
         );
@@ -35,6 +36,7 @@ export default class Coin extends Component {
 Coin.propTypes = {
     name: PropTypes.string.isRequired,
     ticker: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired
+    price: PropTypes.number.isRequired,
+    balance: PropTypes.number.isRequired
 }
 
