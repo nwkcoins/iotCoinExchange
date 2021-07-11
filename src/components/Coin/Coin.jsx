@@ -8,12 +8,7 @@ const TdCoinRow = styled.td`
 `;
 
 export default class Coin extends Component {
-    constructor(props) {
-        super(props);
-        this.doCoinRefresh = this.doCoinRefresh.bind(this);
-    }
-
-    doCoinRefresh(event) {
+    doCoinRefresh = (event) => {
         // Prevent the default action of submitting the form
         event.preventDefault();
         

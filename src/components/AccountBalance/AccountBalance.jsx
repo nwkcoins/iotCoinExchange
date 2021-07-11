@@ -15,12 +15,7 @@ const SectionAccountBalance = styled.section`
 `;
 
 export default class AccountBalance extends Component {
-    constructor(props) {
-        super(props);
-        this.btnBalanceDisplay = this.btnBalanceDisplay.bind(this);
-    }
-
-    btnBalanceDisplay(event) {
+    btnBalanceDisplay = (event) => {
         event.preventDefault();
         this.props.doBalanceDisplay(!this.props.showBalance);
     }
