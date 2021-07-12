@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import AppHeader from './components/AppHeader/AppHeader';
 import CoinList from './components/CoinList/CoinList';
@@ -11,14 +11,12 @@ const TICKER_URL = 'https://api.coinpaprika.com/v1/tickers/';
 const DECIMALS = 6;
 const formatPrice = price => parseFloat(Number(price).toFixed(DECIMALS));
 
-class App extends React.Component {
-  state = {
-    balance: 1000,
-    showBalance: false,
-    coinData: []
-  }
+function App(props) {
+  const [balance, setBalance] = useState(10000);
+  const [showBalance, setShowBalance] = useState(false);
+  const [coinData, setCoinData] = useState([]);
 
-  componentDidMount = async () => {
+  const componentDidMount = async () => {
     const response = await axios.get(COINS_URL);
     const coinIds = response.data.slice(0, COIN_COUNT).map( coin => coin.id );
     const promises = coinIds.map( id => axios.get(TICKER_URL + id));
@@ -33,37 +31,48 @@ class App extends React.Component {
         balance: 0,        
       };
     });
-    this.setState( {coinData: coinPriceData} );
+    setCoinData(coinPriceData);
   }
+
+  useEffect( () => {
+    if (coinData.length === 0) {
+      // component did mount
+      componentDidMount();
+    } else {
+      // component did update
+    }
+  });
+
   //componentDidUpdate = () => {
   //  console.log('componentDidUpdate');
   //}
 
-  doCoinRefresh = async (selectedTicker) => {
-    let newCoinData = this.state.coinData;
+  const doCoinRefresh = async (selectedTicker) => {
+    let newCoinData = coinData;
     for (var key in newCoinData) {
       if (newCoinData[key].ticker === selectedTicker) {
         const ticker = await axios.get(TICKER_URL + newCoinData[key].key);
         newCoinData[key].price = formatPrice(ticker.data.quotes['USD'].price);
-        this.setState({coinData: newCoinData});
+        setCoinData(newCoinData);
         break;
       }
     };
   }
 
-  doBalanceDisplay = (setBalanceDisplay) => {
+  /*doBalanceDisplay = (setBalanceDisplay) => {
     this.setState({showBalance: setBalanceDisplay});
+  }*/
+  const doBalanceDisplay = () => {
+    setShowBalance(oldValue => !oldValue);
   }
 
-  render() {
-    return (
-      <div className="App">
-        <AppHeader />
-        <AccountBalance amount={this.state.balance} showBalance={this.state.showBalance} doBalanceDisplay={this.doBalanceDisplay} />
-        <CoinList coinData={this.state.coinData} showBalance={this.state.showBalance} doCoinRefresh={this.doCoinRefresh} />
-      </div>
-    );
-  }
+  return (
+    <div className="App">
+      <AppHeader />
+      <AccountBalance amount={balance} showBalance={showBalance} doBalanceDisplay={doBalanceDisplay} />
+      <CoinList coinData={coinData} showBalance={showBalance} doCoinRefresh={doCoinRefresh} />
+    </div>
+  );
 }
 
 export default App;
