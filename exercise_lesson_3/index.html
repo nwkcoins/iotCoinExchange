@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Exercise 3</title>
+</head>
+<body>
+
+<h2>API Coins</h2>
+<div id="coinTable"></div>
+
+<script type="text/javascript">
+	fetch('https://api.coinpaprika.com/v1/coins')
+    .then( response => response.json() )
+    .then( coins => {
+    	let html = `<table><tr><th>Rank</th><th>Name</th><th>Symbol</th></tr>`;
+        for (let i = 0; i < 20; ++i ) {
+            const coin = coins[i];
+            console.log( coin.name, coin.symbol );
+
+            html += `<tr><td>${coin.rank}</td><td>${coin.name}</td><td>${coin.symbol}</td></tr>`;
+        }
+        html += `</table>`;
+        document.getElementById('coinTable').innerHTML = html;
+    } );
+</script>
+
+</body>
+</html>

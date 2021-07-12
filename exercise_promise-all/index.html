@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Promise All</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h2>Coin data</h2>
+<div id="coinData"></div>
+
+<script type="text/javascript">
+console.log('start');
+
+async function getData() {
+  let response = await axios.get('https://api.coinpaprika.com/v1/coins');
+  let coinKeys = response.data
+      .slice(0, 5)
+      .map( (coin) => {
+        //console.log(coin.name);
+        return coin.id;
+      });
+  //console.log(coinKeys);
+  Promise.all([
+    axios.get('https://api.coinpaprika.com/v1/tickers/'+coinKeys[0]),
+    axios.get('https://api.coinpaprika.com/v1/tickers/'+coinKeys[1]),
+    axios.get('https://api.coinpaprika.com/v1/tickers/'+coinKeys[2]),
+    axios.get('https://api.coinpaprika.com/v1/tickers/'+coinKeys[3]),
+    axios.get('https://api.coinpaprika.com/v1/tickers/'+coinKeys[4]),
+  ]).then( (tickerResponses) => {
+    let tickers = tickerResponses.map( (response) => {
+      //console.log(response.data.symbol);
+      return {
+        key: response.data.id,
+        name: response.data.name,
+        ticker: response.data.symbol,
+        rank: response.data.rank,
+        price: response.data.quotes['USD'].price
+      };
+    });
+    //console.log(tickers);
+    let html = `<table><tr><th>Rank</th><th>Name</th><th>Symbol</th><th>Price</th></tr>`;
+    for( var key in tickers) {
+      let ticker = tickers[key];
+      //console.log(ticker);
+      html += `<tr><td>${ticker.rank}</td><td>${ticker['name']}</td><td>${ticker['ticker']}</td><td>$${ticker['price']}</td><td></tr>`;
+      //console.log(html);
+    }
+    html += `</table>`;
+    document.getElementById('coinData').innerHTML = html;
+  });
+}
+getData();
+</script>
+
+</body>
+</html>
+
+
+
+

@@ -3,30 +3,52 @@ import './App.css';
 import AppHeader from './components/AppHeader/AppHeader';
 import CoinList from './components/CoinList/CoinList';
 import AccountBalance from './components/AccountBalance/AccountBalance';
+import axios from 'axios';
+
+const COIN_COUNT = 5;
+const COINS_URL = 'https://api.coinpaprika.com/v1/coins';
+const TICKER_URL = 'https://api.coinpaprika.com/v1/tickers/';
+const DECIMALS = 6;
+const formatPrice = price => parseFloat(Number(price).toFixed(DECIMALS));
 
 class App extends React.Component {
   state = {
     balance: 1000,
     showBalance: false,
-    coinData: [
-      { name:"Bitcoin",      ticker:"BTC",  balance: 0.5,  price:35000.90 },
-      { name:"Ethereum",     ticker:"ETH",  balance: 32.0, price:2123.55 },
-      { name:"Tether",       ticker:"USDT", balance: 0,    price:1.0 },
-      { name:"Ripple",       ticker:"XRP",  balance: 1000, price:0.2 },
-      { name:"Bitcoin Cash", ticker:"BCH",  balance: 10.0, price:399.99 },
-    ]
+    coinData: []
   }
 
-  doCoinRefresh = (selectedTicker) => {
-    const newCoinData = this.state.coinData.map( (values) => {
-      let newValues = { ...values };
-      if (values.ticker === selectedTicker) {
-        const randomPercentage = 0.995 + Math.random() * 0.01;
-        newValues.price *= randomPercentage;
-      }
-      return newValues;
+  componentDidMount = async () => {
+    const response = await axios.get(COINS_URL);
+    const coinIds = response.data.slice(0, COIN_COUNT).map( coin => coin.id );
+    const promises = coinIds.map( id => axios.get(TICKER_URL + id));
+    const coinData = await Promise.all(promises);
+    const coinPriceData = coinData.map( response => {
+      const coin = response.data;
+      return {
+        key: coin.id,
+        name: coin.name,
+        ticker: coin.symbol,
+        price: formatPrice(coin.quotes['USD'].price),
+        balance: 0,        
+      };
     });
-    this.setState({coinData: newCoinData}); // replaces only mentioned part
+    this.setState( {coinData: coinPriceData} );
+  }
+  //componentDidUpdate = () => {
+  //  console.log('componentDidUpdate');
+  //}
+
+  doCoinRefresh = async (selectedTicker) => {
+    let newCoinData = this.state.coinData;
+    for (var key in newCoinData) {
+      if (newCoinData[key].ticker === selectedTicker) {
+        const ticker = await axios.get(TICKER_URL + newCoinData[key].key);
+        newCoinData[key].price = formatPrice(ticker.data.quotes['USD'].price);
+        this.setState({coinData: newCoinData});
+        break;
+      }
+    };
   }
 
   doBalanceDisplay = (setBalanceDisplay) => {
