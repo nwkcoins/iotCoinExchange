@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -14,23 +14,21 @@ const SectionAccountBalance = styled.section`
     border: 2px solid grey;
 `;
 
-export default class AccountBalance extends Component {
-    btnBalanceDisplay = (event) => {
+export default function AccountBalance(props) {
+    const btnBalanceDisplay = (event) => {
         event.preventDefault();
-        this.props.doBalanceDisplay(!this.props.showBalance);
+        props.doBalanceDisplay(!props.showBalance);
     }
 
-    render() {
-        const btnText = (this.props.showBalance ? 'Hide' : 'Show') + ' balance';
-        return (
-            <DivAccountBalance>
-                <SectionAccountBalance>
-                    <span style={{display:this.props.showBalance ? 'flex' : 'none'}}>Accountbalance: ${this.props.amount}</span>
-                    <button onClick={this.btnBalanceDisplay}>{btnText}</button>
-                </SectionAccountBalance>
-            </DivAccountBalance>
-        );
-    }
+    const btnText = (props.showBalance ? 'Hide' : 'Show') + ' balance';
+    return (
+        <DivAccountBalance>
+            <SectionAccountBalance>
+                <span style={{display:props.showBalance ? 'flex' : 'none'}}>Accountbalance: ${props.amount}</span>
+                <button onClick={btnBalanceDisplay}>{btnText}</button>
+            </SectionAccountBalance>
+        </DivAccountBalance>
+    );
 }
 
 AccountBalance.propTypes = {
