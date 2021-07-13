@@ -27,11 +27,11 @@ App-title {
   color: #61dafb;
 }
 
-.coin-table {
+/*.coin-table {
   margin: 50px auto 50px auto;
   display: inline-block;
   font-size: 1.4rem;
-}
+}*/
 
 
 @keyframes App-logo-spin {

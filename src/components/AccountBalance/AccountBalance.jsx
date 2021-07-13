@@ -13,19 +13,27 @@ const SectionAccountBalance = styled.section`
     padding: 1rem 1rem 1.5rem 1rem;
     border: 2px solid grey;
 `;
+const Button = styled.button`
+    margin: 0 8px;
+`;
+const ButtonBalanceToggle = styled(Button)`
+    width: 150px;
+`;
+
+var formatter = Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+});
 
 export default function AccountBalance(props) {
-    const btnBalanceDisplay = (event) => {
-        event.preventDefault();
-        props.doBalanceDisplay(!props.showBalance);
-    }
-
     const btnText = (props.showBalance ? 'Hide' : 'Show') + ' balance';
+    const btnClass = 'btn btn-' + (props.showBalance ? 'warning' : 'info'); 
     return (
         <DivAccountBalance>
             <SectionAccountBalance>
                 <span style={{display:props.showBalance ? 'flex' : 'none'}}>Accountbalance: ${props.amount}</span>
-                <button onClick={btnBalanceDisplay}>{btnText}</button>
+                <ButtonBalanceToggle onClick={props.doBalanceDisplay} className={btnClass}>{btnText}</ButtonBalanceToggle>
+                <Button onClick={props.doAddBalance} className="btn btn-success"><i className="fas fa-helicopter"></i></Button>
             </SectionAccountBalance>
         </DivAccountBalance>
     );

@@ -5,6 +5,10 @@ import CoinList from './components/CoinList/CoinList';
 import AccountBalance from './components/AccountBalance/AccountBalance';
 import axios from 'axios';
 
+//import "bootstrap/dist/css/bootstrap.min.css";
+import "bootswatch/dist/flatly/bootstrap.min.css";
+import "@fortawesome/fontawesome-free/js/all";
+
 const COIN_COUNT = 5;
 const COINS_URL = 'https://api.coinpaprika.com/v1/coins';
 const TICKER_URL = 'https://api.coinpaprika.com/v1/tickers/';
@@ -59,6 +63,20 @@ function App(props) {
     };
   }
 
+  const doHandleTransaction = (isBuy, valueChangeId) => {
+    var balanceChange = isBuy ? 1 : -1;
+    const newCoinData = coinData.map( values => {
+      let newValues = {...values};
+      if (values.key === valueChangeId) {
+        console.log(values);
+        newValues.balance += balanceChange;
+        setBalance(oldBalance => oldBalance - balanceChange * newValues.price);
+      }
+      return newValues;
+    });
+    setCoinData(newCoinData);
+  }
+
   /*doBalanceDisplay = (setBalanceDisplay) => {
     this.setState({showBalance: setBalanceDisplay});
   }*/
@@ -66,11 +84,15 @@ function App(props) {
     setShowBalance(oldValue => !oldValue);
   }
 
+  const doAddBalance = () => {
+    setBalance(oldValue => oldValue + 1200);
+  }
+
   return (
     <div className="App">
       <AppHeader />
-      <AccountBalance amount={balance} showBalance={showBalance} doBalanceDisplay={doBalanceDisplay} />
-      <CoinList coinData={coinData} showBalance={showBalance} doCoinRefresh={doCoinRefresh} />
+      <AccountBalance amount={balance} showBalance={showBalance} doBalanceDisplay={doBalanceDisplay} doAddBalance={doAddBalance} />
+      <CoinList coinData={coinData} showBalance={showBalance} doHandleTransaction={doHandleTransaction} doCoinRefresh={doCoinRefresh} />
     </div>
   );
 }
